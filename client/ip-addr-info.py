@@ -4,7 +4,9 @@ import ipaddress
 from pathlib import Path
 import time
 import netifaces
+import socket
 import serial
+import datetime
 
 af_num_name = [(17, 'hardware'), (2, 'IPv4'), (10, 'IPv6')]
 
@@ -78,12 +80,13 @@ def main():
             lines = [ '' for x in range(4) ]
 
             for what, addrs in concat_from_dict_with_prefix(ifinfo, [('hw', 17),('ipv4',2),('ipv6',10)]) :
-                lines[0] = f'{ifname} {what}'
+                datestr = datetime.datetime.now().astimezone().strftime('%H:%M:%S')
+                lines[0] = f'{ifname} {what} {datestr}'
                 if what == 'hw' :
                     lines[1] = addrs['addr']
                 elif what == 'ipv4' :
                     cidr = ipaddress.ip_interface(addrs['addr'] + '/' + addrs['netmask'])
-                    lines[1] = f'i4 {cidr.compressed}'
+                    lines[1] = f'{cidr.compressed}'
                 elif what == 'ipv6' :
                     addr = addrs['addr']
                     mask_str = addrs['netmask']
@@ -95,6 +98,12 @@ def main():
                         lines[2] = cidr[20:40]
                     if len(cidr) > 40 :
                         lines[3] = cidr[40:60]
+
+                if not lines[2] :
+                    hostname = socket.gethostname()
+                    lines[2] = hostname[0:20]
+                    if len(hostname) > 20 :
+                        lines[3] = hostname[20:40]
                 
 
                 tty.write(b'\014')
