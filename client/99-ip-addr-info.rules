@@ -1,0 +1,4 @@
+# Bus 002 Device 071: ID 2e8a:000a Raspberry Pi Pico
+ACTION=="add", SUBSYSTEM=="tty", SUBSYSTEMS=="usb", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000a", ENV{SYSTEMD_WANTS}="ip-addr-info@%k.service", TAG+="systemd"
+
+

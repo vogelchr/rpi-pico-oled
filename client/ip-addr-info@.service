@@ -1,0 +1,9 @@
+[Unit]
+Description=IP address info on a small oled info.
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/ip-addr-info.py -t /dev/%i -b 19200
+
+# [Install]
+# will run via udev rules!
